@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing Intelligence App - V5</title>
+    <title>Marketing Intelligence App - V5.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -82,8 +82,8 @@
                     shopify: { name: 'Shopify', connected: false, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg', color: 'green' },
                     ga4: { name: 'Google Analytics 4', connected: false, logo: 'https://www.gstatic.com/analytics-suite/header/suite/v2/ic_analytics.svg', color: 'orange' },
                     google_ads: { name: 'Google Ads', connected: false, logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Ads_logo.svg', color: 'blue' },
-                    meta: { name: 'Meta (Facebook & Instagram)', connected: false, logo: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Meta-Logo.svg', color: 'indigo' },
-                    tiktok: { name: 'TikTok for Business', connected: false, logo: 'https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg', color: 'black' }
+                    meta: { name: 'Meta (Facebook & Instagram)', connected: false, logo: 'https://www.svgrepo.com/show/394207/meta.svg', color: 'indigo' },
+                    tiktok: { name: 'TikTok for Business', connected: false, logo: 'https://www.svgrepo.com/show/394229/tiktok.svg', color: 'black' }
                 },
                 customers: [],
                 selectedCustomerId: null,
@@ -95,7 +95,7 @@
 
             // 2. BAŞLATMA FONKSİYONU (INIT)
             init() {
-                console.log("Uygulama V5 başlatılıyor...");
+                console.log("Uygulama V5.1 başlatılıyor...");
                 this.render();
             },
             
@@ -109,7 +109,8 @@
             render() {
                 const views = ['setup-view', 'dashboard-view', 'journeys-view', 'channels-view', 'products-view'];
                 views.forEach(viewId => {
-                    document.getElementById(viewId).classList.toggle('hidden', `App.state.currentView !== '${viewId.replace('-view', '')}'`);
+                    // Düzeltme: Doğru boolean karşılaştırması yapılıyor.
+                    document.getElementById(viewId).classList.toggle('hidden', this.state.currentView !== viewId.replace('-view', ''));
                 });
                 
                 document.getElementById('nav-container').classList.toggle('hidden', this.state.currentView === 'setup');
@@ -129,11 +130,17 @@
                 let cardsHTML = '';
                 for (const key in this.state.integrations) {
                     const integration = this.state.integrations[key];
+                    
+                    // Düzeltme: 'black' rengi için özel stil sınıfı belirleniyor.
+                    const buttonColorClass = integration.color === 'black' 
+                        ? 'bg-black hover:bg-gray-800' 
+                        : `bg-${integration.color}-600 hover:bg-${integration.color}-700`;
+
                     cardsHTML += `
                         <div id="card-${key}" class="border ${integration.connected ? `border-${integration.color}-500 bg-${integration.color}-50` : 'border-gray-200'} rounded-lg p-6 flex flex-col items-center justify-center space-y-4 transition-all duration-300">
                             <img src="${integration.logo}" alt="${integration.name} Logo" class="h-12 object-contain"/>
                             <h3 class="text-lg font-semibold text-center h-12 flex items-center">${integration.name}</h3>
-                            <button onclick="App.connect('${key}')" class="w-full ${integration.connected ? 'bg-gray-400 cursor-not-allowed' : `bg-${integration.color}-600 hover:bg-${integration.color}-700`} text-white font-bold py-2 px-4 rounded-lg transition duration-300" ${integration.connected ? 'disabled' : ''}>
+                            <button onclick="App.connect('${key}')" class="w-full ${integration.connected ? 'bg-gray-400 cursor-not-allowed' : buttonColorClass} text-white font-bold py-2 px-4 rounded-lg transition duration-300" ${integration.connected ? 'disabled' : ''}>
                                 ${integration.connected ? '✓ Bağlandı' : 'Bağlan'}
                             </button>
                         </div>
@@ -157,7 +164,6 @@
                             <p class="text-gray-600 mt-2">24 saat içinde ilk içgörülerinizi burada göreceksiniz. Ana panele yönlendiriliyorsunuz...</p>
                         </div>
                     </div>`;
-                container.classList.remove('hidden');
             },
 
             renderTabs() {
