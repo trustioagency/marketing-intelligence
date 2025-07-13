@@ -79,11 +79,11 @@
             state: {
                 currentView: 'setup', // 'setup', 'dashboard', 'journeys', 'channels', 'products'
                 integrations: {
-                    shopify: { name: 'Shopify', connected: false, logo: 'https://cdn.worldvectorlogo.com/logos/shopify.svg', color: 'green' },
+                    shopify: { name: 'Shopify', connected: false, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopify_logo_2018.svg', color: 'green' },
                     ga4: { name: 'Google Analytics 4', connected: false, logo: 'https://www.gstatic.com/analytics-suite/header/suite/v2/ic_analytics.svg', color: 'orange' },
-                    google_ads: { name: 'Google Ads', connected: false, logo: 'https://www.gstatic.com/images/branding/product/1x/ads_64dp.png', color: 'blue' },
-                    meta: { name: 'Meta (Facebook & Instagram)', connected: false, logo: 'https://cdn.worldvectorlogo.com/logos/meta-1.svg', color: 'indigo' },
-                    tiktok: { name: 'TikTok for Business', connected: false, logo: 'https://cdn.worldvectorlogo.com/logos/tiktok-logo-2--1.svg', color: 'black' }
+                    google_ads: { name: 'Google Ads', connected: false, logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Ads_logo.svg', color: 'blue' },
+                    meta: { name: 'Meta (Facebook & Instagram)', connected: false, logo: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Meta-Logo.svg', color: 'indigo' },
+                    tiktok: { name: 'TikTok for Business', connected: false, logo: 'https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg', color: 'black' }
                 },
                 customers: [],
                 selectedCustomerId: null,
@@ -131,7 +131,7 @@
                     const integration = this.state.integrations[key];
                     cardsHTML += `
                         <div id="card-${key}" class="border ${integration.connected ? `border-${integration.color}-500 bg-${integration.color}-50` : 'border-gray-200'} rounded-lg p-6 flex flex-col items-center justify-center space-y-4 transition-all duration-300">
-                            <img src="${integration.logo}" alt="${integration.name} Logo" class="h-12"/>
+                            <img src="${integration.logo}" alt="${integration.name} Logo" class="h-12 object-contain"/>
                             <h3 class="text-lg font-semibold text-center h-12 flex items-center">${integration.name}</h3>
                             <button onclick="App.connect('${key}')" class="w-full ${integration.connected ? 'bg-gray-400 cursor-not-allowed' : `bg-${integration.color}-600 hover:bg-${integration.color}-700`} text-white font-bold py-2 px-4 rounded-lg transition duration-300" ${integration.connected ? 'disabled' : ''}>
                                 ${integration.connected ? '✓ Bağlandı' : 'Bağlan'}
