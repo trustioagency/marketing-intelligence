@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Intelligence App - V3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .modal-overlay { transition: opacity 0.3s ease; }
+        .modal-container { transition: transform 0.3s ease; }
+        .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 50% { opacity: .5; } }
+        .tab-active {
+            border-bottom-color: #4f46e5; /* indigo-600 */
+            color: #1f2937; /* gray-800 */
+            font-weight: 600;
+        }
+        .tab-inactive {
+            border-bottom-color: transparent;
+            color: #6b7280; /* gray-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">Marketing Intelligence</h1>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm">Hoş geldin, Merve!</span>
+                    <img class="h-8 w-8 rounded-full" src="https://placehold.co/100x100/E2E8F0/4A5568?text=M" alt="Merve Profil Fotoğrafı">
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                
+                <!-- Navigasyon Menüsü (Tablar) -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav id="nav-tabs" class="-mb-px flex space-x-8" aria-label="Tabs">
+                        <!-- Tablar JavaScript ile buraya eklenecek -->
+                    </nav>
+                </div>
+
+                <!-- GÖRÜNÜM 2: ANA PANEL (DASHBOARD) -->
+                <div id="dashboard-view" class="hidden">
+                    <!-- İçerik JavaScript ile doldurulacak -->
+                </div>
+
+                <!-- GÖRÜNÜM 3: MÜŞTERİ YOLCULUKLARI -->
+                <div id="journeys-view" class="hidden">
+                    <!-- İçerik JavaScript ile doldurulacak -->
+                </div>
+                
+                <!-- GÖRÜNÜM 4: KANALLAR -->
+                <div id="channels-view" class="hidden">
+                    <!-- İçerik JavaScript ile doldurulacak -->
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Onay Modalı (Pop-up) -->
+    <div id="confirmation-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden" onclick="App.closeModal()">
+        <div class="modal-container bg-white w-full max-w-md rounded-lg shadow-lg p-6 transform scale-95" onclick="event.stopPropagation()">
+            <h3 id="modal-title" class="text-xl font-bold text-gray-900">Onay</h3>
+            <p id="modal-body" class="mt-2 text-gray-600">Bu işlemi onaylıyor musunuz?</p>
+            <div class="mt-6 flex justify-end space-x-4">
+                <button onclick="App.closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">İptal</button>
+                <button id="modal-confirm-button" onclick="App.confirmAction()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Evet, Onayla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===================================================================================
+        // UYGULAMA BEYNİ (JAVASCRIPT KODU)
+        // ===================================================================================
+        const App = {
+            // 1. UYGULAMA DURUMU (STATE)
+            state: {
+                currentView: 'dashboard', // 'dashboard', 'journeys', 'channels'
+                customers: [],
+                selectedCustomerId: null,
+                recommendations: [],
+                channelData: {},
+                currentAction: null
+            },
+
+            // 2. BAŞLATMA FONKSİYONU (INIT)
+            init() {
+                console.log("Uygulama V3 başlatılıyor...");
+                this.fetchData();
+                this.render();
+            },
+            
+            // Veri Getirme Simülasyonu
+            fetchData() {
+                // Sahte verileri belirli aralıklarla getirerek gerçekçi bir yüklenme hissi yarat
+                setTimeout(() => {
+                    this.state.customers = [
+                        { id: 1, email: 'ayse.y@example.com', totalSpend: 450, date: '1 saat önce', journey: [{ event: 'Meta Reklamı Tıkladı', detail: 'Yaz Koleksiyonu Kampanyası', date: '3 gün önce', icon: 'M' }, { event: 'Siteyi Ziyaret Etti', detail: '5 sayfa gezdi', date: '3 gün önce', icon: '🌐' }, { event: 'Sepete Ekledi', detail: 'Yüksek Bel Siyah Bikini', date: '1 gün önce', icon: '🛒' }, { event: 'Satın Aldı', detail: 'Sipariş #1058', date: '1 saat önce', icon: '✅' }] },
+                        { id: 2, email: 'burak.c@example.com', totalSpend: 280, date: '8 saat önce', journey: [{ event: 'Google Reklamı Tıkladı', detail: 'Bikini Modelleri Araması', date: '2 gün önce', icon: 'G' }, { event: 'Satın Aldı', detail: 'Sipariş #1057', date: '8 saat önce', icon: '✅' }] },
+                        { id: 3, email: 'canan.s@example.com', totalSpend: 620, date: '1 gün önce', journey: [{ event: 'Siteyi Ziyaret Etti', detail: 'Organik Trafik', date: '5 gün önce', icon: '🌐' }, { event: 'E-posta Bültenine Kaydoldu', detail: 'Hoş geldin indirimi', date: '4 gün önce', icon: '✉️' }, { event: 'E-postayı Tıkladı', detail: 'Yeni Sezon Kampanyası', date: '1 gün önce', icon: '🖱️' }, { event: 'Satın Aldı', detail: 'Sipariş #1056', date: '1 gün önce', icon: '✅' }] }
+                    ];
+                    this.state.selectedCustomerId = this.state.customers[0]?.id;
+                    this.render();
+                }, 500);
+
+                setTimeout(() => {
+                    this.state.recommendations = [
+                         { id: 1, type: 'opportunity', title: 'Fırsat: Yüksek Performanslı Reklam', description: '"Yüksek Bel Siyah Bikini" için yürüttüğünüz Instagram reklamı son 3 günde **7.2x ROAS** getirdi. Bu reklamın günlük bütçesini 150 TL\'den 250 TL\'ye çıkararak potansiyeli artırmanızı öneriyoruz.', action: { title: 'Bütçeyi Artır', body: 'Bu reklamın günlük bütçesi 150 TL\'den 250 TL\'ye çıkarılacak. Onaylıyor musunuz?' } },
+                         { id: 2, type: 'risk', title: 'Risk: Para Yakan Kampanya', description: '"Plaj Çantası" için yürüttüğünüz Google Ads kampanyası son 48 saattir kârlılığın altında (**0.8x ROAS**). Bu kampanyayı geçici olarak duraklatarak bütçenizi korumanızı öneriyoruz.', action: { title: 'Kampanyayı Duraklat', body: 'Bu kampanya geçici olarak duraklatılacak. Onaylıyor musunuz?' } },
+                         { id: 3, type: 'insight', title: 'İçgörü: Müşteri Davranışı', description: 'Verilerinize göre, sitenizi mobil cihazdan ziyaret eden müşterilerin dönüşüm oranı, masaüstü kullanıcılardan **%35 daha yüksek**. Mobil reklamlarınıza ağırlık vermeyi düşünebilirsiniz.', action: null }
+                    ];
+                    this.render();
+                }, 1000);
+                
+                setTimeout(() => {
+                    this.state.channelData = {
+                        google: { name: 'Google Ads', spend: 4200, revenue: 21000, roas: 5.0, conversions: 45, cpc: 3.50 },
+                        meta: { name: 'Meta Ads', spend: 7000, revenue: 27750, roas: 3.96, conversions: 62, cpc: 2.80 }
+                    };
+                    this.render();
+                }, 1500);
+            },
+
+            // 3. EKRANI YENİLEME FONKSİYONU (RENDER)
+            render() {
+                this.renderTabs();
+                
+                document.getElementById('dashboard-view').classList.toggle('hidden', this.state.currentView !== 'dashboard');
+                document.getElementById('journeys-view').classList.toggle('hidden', this.state.currentView !== 'journeys');
+                document.getElementById('channels-view').classList.toggle('hidden', this.state.currentView !== 'channels');
+
+                if (this.state.currentView === 'dashboard') this.renderDashboard();
+                else if (this.state.currentView === 'journeys') this.renderJourneysView();
+                else if (this.state.currentView === 'channels') this.renderChannelsView();
+            },
+            
+            renderTabs() {
+                const tabs = [
+                    { id: 'dashboard', name: 'Ana Panel' },
+                    { id: 'journeys', name: 'Müşteri Yolculukları' },
+                    { id: 'channels', name: 'Kanallar' }
+                ];
+                const container = document.getElementById('nav-tabs');
+                container.innerHTML = '';
+                tabs.forEach(tab => {
+                    const isActive = this.state.currentView === tab.id;
+                    container.innerHTML += `<a href="#" onclick="App.switchView('${tab.id}')" class="py-4 px-1 border-b-2 text-sm ${isActive ? 'tab-active' : 'tab-inactive'}">${tab.name}</a>`;
+                });
+            },
+
+            renderDashboard() {
+                const container = document.getElementById('dashboard-view');
+                container.innerHTML = `
+                    <div id="summary-metrics" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
+                    <div class="mt-8">
+                        <h3 class="text-xl font-semibold text-gray-900">Bugünün Aksiyon Önerileri</h3>
+                        <div id="recommendations-container" class="mt-4 bg-white shadow rounded-lg p-6 space-y-6"></div>
+                    </div>`;
+                this.renderSummaryMetrics();
+                this.renderRecommendations();
+            },
+            
+            renderJourneysView() {
+                const container = document.getElementById('journeys-view');
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="md:col-span-1 bg-white shadow rounded-lg p-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Son Müşteriler</h3>
+                            <ul id="customer-list" class="space-y-2"></ul>
+                        </div>
+                        <div id="customer-journey-detail" class="md:col-span-2 bg-white shadow rounded-lg p-6"></div>
+                    </div>`;
+                this.renderCustomerList();
+                this.renderCustomerJourneyDetail();
+            },
+
+            renderChannelsView() {
+                const container = document.getElementById('channels-view');
+                if (Object.keys(this.state.channelData).length === 0) {
+                    container.innerHTML = `<p class="text-center text-gray-500">Kanal verileri yükleniyor...</p>`;
+                    return;
+                }
+                
+                let content = '<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">';
+                for(const key in this.state.channelData) {
+                    const channel = this.state.channelData[key];
+                    content += `
+                        <div class="bg-white shadow rounded-lg p-6">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">${channel.name}</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <span class="text-gray-600">Reklam Harcaması</span>
+                                    <span class="font-semibold text-lg">₺${channel.spend.toLocaleString('tr-TR')}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <span class="text-gray-600">Getirilen Ciro</span>
+                                    <span class="font-semibold text-lg">₺${channel.revenue.toLocaleString('tr-TR')}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <span class="text-gray-600">Reklam Kârlılığı (ROAS)</span>
+                                    <span class="font-bold text-xl ${channel.roas > 4 ? 'text-green-600' : 'text-orange-500'}">${channel.roas.toFixed(2)}x</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <span class="text-gray-600">Dönüşüm Sayısı</span>
+                                    <span class="font-semibold text-lg">${channel.conversions}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Tıklama Başına Maliyet (CPC)</span>
+                                    <span class="font-semibold text-lg">₺${channel.cpc.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                content += '</div>';
+                container.innerHTML = content;
+            },
+            
+            // Diğer render fonksiyonları (customer list, detail, summary, recommendations) öncekiyle aynı
+            renderCustomerList() {
+                const container = document.getElementById('customer-list');
+                container.innerHTML = '';
+                this.state.customers.forEach(customer => {
+                    const isSelected = this.state.selectedCustomerId === customer.id;
+                    container.innerHTML += `<li onclick="App.selectCustomer(${customer.id})" class="p-3 rounded-lg cursor-pointer ${isSelected ? 'bg-indigo-100' : 'hover:bg-gray-100'}"><p class="font-semibold text-sm ${isSelected ? 'text-indigo-800' : 'text-gray-800'}">${customer.email}</p><div class="flex justify-between text-xs mt-1 ${isSelected ? 'text-indigo-600' : 'text-gray-500'}"><span>₺${customer.totalSpend}</span><span>${customer.date}</span></div></li>`;
+                });
+            },
+            renderCustomerJourneyDetail() {
+                const container = document.getElementById('customer-journey-detail');
+                const customer = this.state.customers.find(c => c.id === this.state.selectedCustomerId);
+                if (!customer) { container.innerHTML = `<p class="text-center text-gray-500">Detayları görmek için bir müşteri seçin.</p>`; return; }
+                let journeyHTML = `<h3 class="text-lg font-bold text-gray-900 mb-6">${customer.email}'in Yolculuğu</h3><ol class="relative border-l border-gray-200">`;
+                customer.journey.forEach(step => { journeyHTML += `<li class="mb-6 ml-6"><span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">${step.icon}</span><h4 class="flex items-center mb-1 text-base font-semibold text-gray-900">${step.event}</h4><time class="block mb-2 text-sm font-normal leading-none text-gray-400">${step.date}</time><p class="text-sm text-gray-600">${step.detail}</p></li>`; });
+                journeyHTML += `</ol>`;
+                container.innerHTML = journeyHTML;
+            },
+            renderSummaryMetrics() {
+                const totalRevenue = Object.values(this.state.channelData).reduce((sum, ch) => sum + ch.revenue, 0);
+                const totalSpend = Object.values(this.state.channelData).reduce((sum, ch) => sum + ch.spend, 0);
+                const totalRoas = totalSpend > 0 ? totalRevenue / totalSpend : 0;
+                const metrics = [
+                    { label: 'Toplam Ciro (Son 7 Gün)', value: `₺${totalRevenue.toLocaleString('tr-TR')}`},
+                    { label: 'Reklam Harcaması (Son 7 Gün)', value: `₺${totalSpend.toLocaleString('tr-TR')}`},
+                    { label: 'Reklam Kârlılığı (ROAS)', value: `${totalRoas.toFixed(2)}x`, isGreen: true }
+                ];
+                const container = document.getElementById('summary-metrics');
+                container.innerHTML = '';
+                metrics.forEach(metric => {
+                    container.innerHTML += `<div class="bg-white overflow-hidden shadow rounded-lg p-5"><div class="flex items-center"><div class="flex-shrink-0"><!-- icon --></div><div class="ml-5 w-0 flex-1"><dl><dt class="text-sm font-medium text-gray-500 truncate">${metric.label}</dt><dd class="text-3xl font-bold ${metric.isGreen ? 'text-green-600' : 'text-gray-900'}">${metric.value}</dd></dl></div></div></div>`;
+                });
+            },
+            renderRecommendations() {
+                const container = document.getElementById('recommendations-container');
+                container.innerHTML = '';
+                if(this.state.recommendations.length === 0) { container.innerHTML = `<p class="text-center text-gray-500">Analiz devam ediyor...</p>`; return; }
+                this.state.recommendations.forEach(rec => {
+                    const colors = { opportunity: { border: 'green-200', bg: 'green-50', text: 'green-800', button: 'bg-green-600 hover:bg-green-700' }, risk: { border: 'red-200', bg: 'red-50', text: 'red-800', button: 'bg-red-600 hover:bg-red-700' }, insight: { border: 'blue-200', bg: 'blue-50', text: 'blue-800', button: '' } };
+                    const theme = colors[rec.type];
+                    container.innerHTML += `<div id="rec-${rec.id}" class="flex items-start space-x-4 p-4 border border-${theme.border} bg-${theme.bg} rounded-lg"> <div class="flex-shrink-0"><!-- icon --></div> <div> <h4 class="text-lg font-bold text-${theme.text}">${rec.title}</h4> <p class="text-gray-700 mt-1">${rec.description}</p> ${rec.action ? `<button onclick="App.openModal('${rec.id}', '${rec.action.title}', '${rec.action.body}')" class="mt-3 ${theme.button} text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-sm">Tek Tıkla Onayla</button>` : ''} </div> </div>`;
+                });
+            },
+
+            // 4. AKSİYONLAR
+            switchView(viewName) {
+                this.state.currentView = viewName;
+                this.render();
+            },
+            selectCustomer(customerId) {
+                this.state.selectedCustomerId = customerId;
+                this.render();
+            },
+            openModal(recId, title, body) { this.state.currentAction = recId; document.getElementById('modal-title').innerText = title; document.getElementById('modal-body').innerText = body; document.getElementById('confirmation-modal').classList.remove('hidden'); },
+            closeModal() { document.getElementById('confirmation-modal').classList.add('hidden'); },
+            confirmAction() {
+                if (!this.state.currentAction) return;
+                const button = document.querySelector(`#rec-${this.state.currentAction} button`);
+                button.disabled = true;
+                button.innerText = 'İşlem Uygulanıyor...';
+                this.closeModal();
+                setTimeout(() => { button.innerText = '✓ Uygulandı'; }, 2000);
+                this.state.currentAction = null;
+            }
+        };
+
+        // Uygulamayı başlat
+        document.addEventListener('DOMContentLoaded', () => App.init());
+
+    </script>
+
+</body>
+</html>
