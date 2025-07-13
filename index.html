@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing Intelligence App - V5.2</title>
+    <title>Marketing Intelligence App - V5.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -95,14 +95,21 @@
 
             // 2. BAŞLATMA FONKSİYONU (INIT)
             init() {
-                console.log("Uygulama V5.2 başlatılıyor...");
+                console.log("Uygulama V5.3 başlatılıyor...");
                 this.render();
             },
             
             // Veri Getirme Simülasyonu
             fetchData() {
-                // Bu fonksiyon artık tüm sahte verileri getirir
-                // ... (Önceki versiyonla aynı, uzunluk için kaldırıldı)
+                console.log("Tüm veriler getiriliyor...");
+                setTimeout(() => {
+                    this.state.customers = [ { id: 1, email: 'ayse.y@example.com', totalSpend: 450, date: '1 saat önce', journey: [{ event: 'Meta Reklamı Tıkladı', detail: 'Yaz Koleksiyonu Kampanyası', date: '3 gün önce', icon: 'M' }, { event: 'Siteyi Ziyaret Etti', detail: '5 sayfa gezdi', date: '3 gün önce', icon: '🌐' }, { event: 'Sepete Ekledi', detail: 'Yüksek Bel Siyah Bikini', date: '1 gün önce', icon: '🛒' }, { event: 'Satın Aldı', detail: 'Sipariş #1058', date: '1 saat önce', icon: '✅' }] }, { id: 2, email: 'burak.c@example.com', totalSpend: 280, date: '8 saat önce', journey: [{ event: 'Google Reklamı Tıkladı', detail: 'Bikini Modelleri Araması', date: '2 gün önce', icon: 'G' }, { event: 'Satın Aldı', detail: 'Sipariş #1057', date: '8 saat önce', icon: '✅' }] }, { id: 3, email: 'canan.s@example.com', totalSpend: 620, date: '1 gün önce', journey: [{ event: 'Siteyi Ziyaret Etti', detail: 'Organik Trafik', date: '5 gün önce', icon: '🌐' }, { event: 'E-posta Bültenine Kaydoldu', detail: 'Hoş geldin indirimi', date: '4 gün önce', icon: '✉️' }, { event: 'E-postayı Tıkladı', detail: 'Yeni Sezon Kampanyası', date: '1 gün önce', icon: '🖱️' }, { event: 'Satın Aldı', detail: 'Sipariş #1056', date: '1 gün önce', icon: '✅' }] } ];
+                    this.state.selectedCustomerId = this.state.customers[0]?.id;
+                    this.state.recommendations = [ { id: 1, type: 'opportunity', title: 'Fırsat: Yüksek Performanslı Reklam', description: '"Yüksek Bel Siyah Bikini" için yürüttüğünüz Instagram reklamı son 3 günde **7.2x ROAS** getirdi. Bu reklamın günlük bütçesini 150 TL\'den 250 TL\'ye çıkararak potansiyeli artırmanızı öneriyoruz.', action: { title: 'Bütçeyi Artır', body: 'Bu reklamın günlük bütçesi 150 TL\'den 250 TL\'ye çıkarılacak. Onaylıyor musunuz?' } }, { id: 2, type: 'risk', title: 'Risk: Para Yakan Kampanya', description: '"Plaj Çantası" için yürüttüğünüz Google Ads kampanyası son 48 saattir kârlılığın altında (**0.8x ROAS**). Bu kampanyayı geçici olarak duraklatarak bütçenizi korumanızı öneriyoruz.', action: { title: 'Kampanyayı Duraklat', body: 'Bu kampanya geçici olarak duraklatılacak. Onaylıyor musunuz?' } }, { id: 3, type: 'insight', title: 'İçgörü: Müşteri Davranışı', description: 'Verilerinize göre, sitenizi mobil cihazdan ziyaret eden müşterilerin dönüşüm oranı, masaüstü kullanıcılardan **%35 daha yüksek**. Mobil reklamlarınıza ağırlık vermeyi düşünebilirsiniz.', action: null } ];
+                    this.state.channelData = { google: { name: 'Google Ads', spend: 4200, revenue: 21000, roas: 5.0, conversions: 45, cpc: 3.50 }, meta: { name: 'Meta Ads', spend: 7000, revenue: 27750, roas: 3.96, conversions: 62, cpc: 2.80 } };
+                    this.state.productData = [ { id: 1, name: 'Yüksek Bel Siyah Bikini', img: 'https://placehold.co/40x40/111827/FFFFFF?text=B', totalRevenue: 18500, googleRevenue: 6500, metaRevenue: 12000 }, { id: 2, name: 'Tropikal Desenli Tek Parça', img: 'https://placehold.co/40x40/10B981/FFFFFF?text=T', totalRevenue: 12200, googleRevenue: 4000, metaRevenue: 8200 }, { id: 3, name: 'Kırmızı Üçgen Bikini', img: 'https://placehold.co/40x40/EF4444/FFFFFF?text=K', totalRevenue: 9800, googleRevenue: 7800, metaRevenue: 2000 }, { id: 4, name: 'Plaj Çantası', img: 'https://placehold.co/40x40/F59E0B/FFFFFF?text=Ç', totalRevenue: 8250, googleRevenue: 3000, metaRevenue: 5250 }, ];
+                    this.render(); // Veriler geldikten sonra ekranı yeniden çiz
+                }, 500);
             },
 
             // 3. EKRANI YENİLEME FONKSİYONU (RENDER)
@@ -129,51 +136,14 @@
                 let cardsHTML = '';
                 for (const key in this.state.integrations) {
                     const integration = this.state.integrations[key];
-                    
-                    const buttonColorClass = integration.color === 'black' 
-                        ? 'bg-black hover:bg-gray-800' 
-                        : `bg-${integration.color}-600 hover:bg-${integration.color}-700`;
-
-                    cardsHTML += `
-                        <div id="card-${key}" class="border ${integration.connected ? `border-${integration.color}-500 bg-${integration.color}-50` : 'border-gray-200'} rounded-lg p-6 flex flex-col items-center justify-between space-y-4 transition-all duration-300">
-                            <div class="h-16 flex items-center justify-center">
-                                <img src="${integration.logo}" alt="${integration.name} Logo" class="max-h-12 object-contain"/>
-                            </div>
-                            <h3 class="text-lg font-semibold text-center h-12 flex items-center justify-center">${integration.name}</h3>
-                            <button onclick="App.connect('${key}')" class="w-full ${integration.connected ? 'bg-gray-400 cursor-not-allowed' : buttonColorClass} text-white font-bold py-2 px-4 rounded-lg transition duration-300" ${integration.connected ? 'disabled' : ''}>
-                                ${integration.connected ? '✓ Bağlandı' : 'Bağlan'}
-                            </button>
-                        </div>
-                    `;
+                    const buttonColorClass = integration.color === 'black' ? 'bg-black hover:bg-gray-800' : `bg-${integration.color}-600 hover:bg-${integration.color}-700`;
+                    cardsHTML += `<div id="card-${key}" class="border ${integration.connected ? `border-${integration.color}-500 bg-${integration.color}-50` : 'border-gray-200'} rounded-lg p-6 flex flex-col items-center justify-between space-y-4 transition-all duration-300"><div class="h-16 flex items-center justify-center"><img src="${integration.logo}" alt="${integration.name} Logo" class="max-h-12 object-contain"/></div><h3 class="text-lg font-semibold text-center h-12 flex items-center justify-center">${integration.name}</h3><button onclick="App.connect('${key}')" class="w-full ${integration.connected ? 'bg-gray-400 cursor-not-allowed' : buttonColorClass} text-white font-bold py-2 px-4 rounded-lg transition duration-300" ${integration.connected ? 'disabled' : ''}>${integration.connected ? '✓ Bağlandı' : 'Bağlan'}</button></div>`;
                 }
-
-                container.innerHTML = `
-                    <div class="bg-white p-8 rounded-lg shadow space-y-6">
-                        <div class="text-center">
-                            <h2 class="text-2xl font-bold">Platforma Hoş Geldiniz!</h2>
-                            <p class="text-gray-600 mt-2">Başlamak için lütfen tüm veri kaynaklarınızı bağlayın.</p>
-                        </div>
-                        <div id="integration-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                            ${cardsHTML}
-                        </div>
-                        <div id="analysis-message" class="hidden text-center pt-6">
-                            <div class="animate-pulse-slow inline-block">
-                                <svg class="w-12 h-12 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6V3m0 18v-3M5.636 5.636l-1.414-1.414M19.778 19.778l-1.414-1.414M18.364 5.636l1.414-1.414M4.222 19.778l1.414-1.414"></path></svg>
-                            </div>
-                            <h3 class="text-xl font-semibold mt-4">Harika! Verilerinizi analiz etmeye başladık.</h3>
-                            <p class="text-gray-600 mt-2">24 saat içinde ilk içgörülerinizi burada göreceksiniz. Ana panele yönlendiriliyorsunuz...</p>
-                        </div>
-                    </div>`;
-                container.classList.remove('hidden');
+                container.innerHTML = `<div class="bg-white p-8 rounded-lg shadow space-y-6"><div class="text-center"><h2 class="text-2xl font-bold">Platforma Hoş Geldiniz!</h2><p class="text-gray-600 mt-2">Başlamak için lütfen tüm veri kaynaklarınızı bağlayın.</p></div><div id="integration-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">${cardsHTML}</div><div id="analysis-message" class="hidden text-center pt-6"><div class="animate-pulse-slow inline-block"><svg class="w-12 h-12 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6V3m0 18v-3M5.636 5.636l-1.414-1.414M19.778 19.778l-1.414-1.414M18.364 5.636l1.414-1.414M4.222 19.778l1.414-1.414"></path></svg></div><h3 class="text-xl font-semibold mt-4">Harika! Verilerinizi analiz etmeye başladık.</h3><p class="text-gray-600 mt-2">24 saat içinde ilk içgörülerinizi burada göreceksiniz. Ana panele yönlendiriliyorsunuz...</p></div></div>`;
             },
 
             renderTabs() {
-                const tabs = [
-                    { id: 'dashboard', name: 'Ana Panel' },
-                    { id: 'journeys', name: 'Müşteri Yolculukları' },
-                    { id: 'channels', name: 'Kanallar' },
-                    { id: 'products', name: 'Ürünler' }
-                ];
+                const tabs = [{ id: 'dashboard', name: 'Ana Panel' }, { id: 'journeys', name: 'Müşteri Yolculukları' }, { id: 'channels', name: 'Kanallar' }, { id: 'products', name: 'Ürünler' }];
                 const container = document.getElementById('nav-tabs');
                 container.innerHTML = '';
                 tabs.forEach(tab => {
@@ -182,12 +152,46 @@
                 });
             },
 
-            // Diğer render fonksiyonları (dashboard, journeys, channels, products) öncekiyle aynı
-            renderDashboard() { /* Öncekiyle aynı, uzunluk için kaldırıldı */ },
-            renderJourneysView() { /* Öncekiyle aynı, uzunluk için kaldırıldı */ },
-            renderChannelsView() { /* Öncekiyle aynı, uzunluk için kaldırıldı */ },
-            renderProductsView() { /* Öncekiyle aynı, uzunluk için kaldırıldı */ },
+            renderDashboard() {
+                const container = document.getElementById('dashboard-view');
+                container.innerHTML = `<div id="summary-metrics" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"></div><div class="mt-8"><h3 class="text-xl font-semibold text-gray-900">Bugünün Aksiyon Önerileri</h3><div id="recommendations-container" class="mt-4 bg-white shadow rounded-lg p-6 space-y-6"></div></div>`;
+                this.renderSummaryMetrics();
+                this.renderRecommendations();
+            },
+            
+            renderJourneysView() {
+                const container = document.getElementById('journeys-view');
+                container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="md:col-span-1 bg-white shadow rounded-lg p-4"><h3 class="text-lg font-semibold text-gray-900 mb-4">Son Müşteriler</h3><ul id="customer-list" class="space-y-2"></ul></div><div id="customer-journey-detail" class="md:col-span-2 bg-white shadow rounded-lg p-6"></div></div>`;
+                this.renderCustomerList();
+                this.renderCustomerJourneyDetail();
+            },
 
+            renderChannelsView() {
+                const container = document.getElementById('channels-view');
+                if (Object.keys(this.state.channelData).length === 0) { container.innerHTML = `<p class="text-center text-gray-500">Kanal verileri yükleniyor...</p>`; return; }
+                let content = '<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">';
+                for(const key in this.state.channelData) {
+                    const channel = this.state.channelData[key];
+                    content += `<div class="bg-white shadow rounded-lg p-6"><h3 class="text-2xl font-bold text-gray-900 mb-4">${channel.name}</h3><div class="space-y-4"><div class="flex justify-between items-center border-b pb-2"><span class="text-gray-600">Reklam Harcaması</span><span class="font-semibold text-lg">₺${channel.spend.toLocaleString('tr-TR')}</span></div><div class="flex justify-between items-center border-b pb-2"><span class="text-gray-600">Getirilen Ciro</span><span class="font-semibold text-lg">₺${channel.revenue.toLocaleString('tr-TR')}</span></div><div class="flex justify-between items-center border-b pb-2"><span class="text-gray-600">Reklam Kârlılığı (ROAS)</span><span class="font-bold text-xl ${channel.roas > 4 ? 'text-green-600' : 'text-orange-500'}">${channel.roas.toFixed(2)}x</span></div><div class="flex justify-between items-center border-b pb-2"><span class="text-gray-600">Dönüşüm Sayısı</span><span class="font-semibold text-lg">${channel.conversions}</span></div><div class="flex justify-between items-center"><span class="text-gray-600">Tıklama Başına Maliyet (CPC)</span><span class="font-semibold text-lg">₺${channel.cpc.toFixed(2)}</span></div></div></div>`;
+                }
+                content += '</div>';
+                container.innerHTML = content;
+            },
+
+            renderProductsView() {
+                const container = document.getElementById('products-view');
+                if (this.state.productData.length === 0) { container.innerHTML = `<p class="text-center text-gray-500">Ürün performans verileri yükleniyor...</p>`; return; }
+                let tableHTML = `<div class="bg-white shadow rounded-lg overflow-hidden"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ürün</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toplam Ciro</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Google Ads Getirisi</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Meta Ads Getirisi</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">`;
+                this.state.productData.forEach(product => { tableHTML += `<tr><td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center"><div class="flex-shrink-0 h-10 w-10"><img class="h-10 w-10 rounded-full" src="${product.img}" alt="${product.name}"></div><div class="ml-4"><div class="text-sm font-medium text-gray-900">${product.name}</div></div></div></td><td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-bold text-gray-900">₺${product.totalRevenue.toLocaleString('tr-TR')}</div></td><td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">₺${product.googleRevenue.toLocaleString('tr-TR')}</div></td><td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">₺${product.metaRevenue.toLocaleString('tr-TR')}</div></td></tr>`; });
+                tableHTML += `</tbody></table></div>`;
+                container.innerHTML = tableHTML;
+            },
+            
+            renderCustomerList() { const container = document.getElementById('customer-list'); if(!container) return; container.innerHTML = ''; this.state.customers.forEach(customer => { const isSelected = this.state.selectedCustomerId === customer.id; container.innerHTML += `<li onclick="App.selectCustomer(${customer.id})" class="p-3 rounded-lg cursor-pointer ${isSelected ? 'bg-indigo-100' : 'hover:bg-gray-100'}"><p class="font-semibold text-sm ${isSelected ? 'text-indigo-800' : 'text-gray-800'}">${customer.email}</p><div class="flex justify-between text-xs mt-1 ${isSelected ? 'text-indigo-600' : 'text-gray-500'}"><span>₺${customer.totalSpend}</span><span>${customer.date}</span></div></li>`; }); },
+            renderCustomerJourneyDetail() { const container = document.getElementById('customer-journey-detail'); if(!container) return; const customer = this.state.customers.find(c => c.id === this.state.selectedCustomerId); if (!customer) { container.innerHTML = `<p class="text-center text-gray-500">Detayları görmek için bir müşteri seçin.</p>`; return; } let journeyHTML = `<h3 class="text-lg font-bold text-gray-900 mb-6">${customer.email}'in Yolculuğu</h3><ol class="relative border-l border-gray-200">`; customer.journey.forEach(step => { journeyHTML += `<li class="mb-6 ml-6"><span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">${step.icon}</span><h4 class="flex items-center mb-1 text-base font-semibold text-gray-900">${step.event}</h4><time class="block mb-2 text-sm font-normal leading-none text-gray-400">${step.date}</time><p class="text-sm text-gray-600">${step.detail}</p></li>`; }); journeyHTML += `</ol>`; container.innerHTML = journeyHTML; },
+            renderSummaryMetrics() { const container = document.getElementById('summary-metrics'); if(!container) return; const totalRevenue = Object.values(this.state.channelData).reduce((sum, ch) => sum + ch.revenue, 0); const totalSpend = Object.values(this.state.channelData).reduce((sum, ch) => sum + ch.spend, 0); const totalRoas = totalSpend > 0 ? totalRevenue / totalSpend : 0; const metrics = [ { label: 'Toplam Ciro (Son 7 Gün)', value: `₺${totalRevenue.toLocaleString('tr-TR')}`}, { label: 'Reklam Harcaması (Son 7 Gün)', value: `₺${totalSpend.toLocaleString('tr-TR')}`}, { label: 'Reklam Kârlılığı (ROAS)', value: `${totalRoas.toFixed(2)}x`, isGreen: true } ]; container.innerHTML = ''; metrics.forEach(metric => { container.innerHTML += `<div class="bg-white overflow-hidden shadow rounded-lg p-5"><div class="flex items-center"><div class="flex-shrink-0"><!-- icon --></div><div class="ml-5 w-0 flex-1"><dl><dt class="text-sm font-medium text-gray-500 truncate">${metric.label}</dt><dd class="text-3xl font-bold ${metric.isGreen ? 'text-green-600' : 'text-gray-900'}">${metric.value}</dd></dl></div></div></div>`; }); },
+            renderRecommendations() { const container = document.getElementById('recommendations-container'); if(!container) return; container.innerHTML = ''; if(this.state.recommendations.length === 0) { container.innerHTML = `<p class="text-center text-gray-500">Analiz devam ediyor...</p>`; return; } this.state.recommendations.forEach(rec => { const colors = { opportunity: { border: 'green-200', bg: 'green-50', text: 'green-800', button: 'bg-green-600 hover:bg-green-700' }, risk: { border: 'red-200', bg: 'red-50', text: 'red-800', button: 'bg-red-600 hover:bg-red-700' }, insight: { border: 'blue-200', bg: 'blue-50', text: 'blue-800', button: '' } }; const theme = colors[rec.type]; container.innerHTML += `<div id="rec-${rec.id}" class="flex items-start space-x-4 p-4 border border-${theme.border} bg-${theme.bg} rounded-lg"> <div class="flex-shrink-0"><!-- icon --></div> <div> <h4 class="text-lg font-bold text-${theme.text}">${rec.title}</h4> <p class="text-gray-700 mt-1">${rec.description}</p> ${rec.action ? `<button onclick="App.openModal('${rec.id}', '${rec.action.title}', '${rec.action.body}')" class="mt-3 ${theme.button} text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-sm">Tek Tıkla Onayla</button>` : ''} </div> </div>`; }); },
+            
             // AKSİYONLAR
             switchView(viewName) {
                 this.state.currentView = viewName;
@@ -201,39 +205,27 @@
                 
                 setTimeout(() => {
                     this.state.integrations[platformKey].connected = true;
-                    this.renderSetupView(); // Kartın görünümünü güncelle
+                    this.render(); 
                     
                     const allConnected = Object.values(this.state.integrations).every(p => p.connected);
                     
                     if (allConnected) {
-                        document.getElementById('analysis-message').classList.remove('hidden');
+                        const analysisMessage = document.getElementById('analysis-message');
+                        if(analysisMessage) analysisMessage.classList.remove('hidden');
+                        
                         setTimeout(() => {
                             this.state.currentView = 'dashboard';
-                            this.fetchData(); // Ana panel için verileri getir
-                            this.render();
+                            this.fetchData();
                         }, 3000);
                     }
                 }, 2000);
             },
             
-            // Diğer aksiyonlar (selectCustomer, openModal, closeModal, confirmAction) öncekiyle aynı
-            selectCustomer(customerId) { /* Öncekiyle aynı */ },
-            openModal(recId, title, body) { /* Öncekiyle aynı */ },
-            closeModal() { /* Öncekiyle aynı */ },
-            confirmAction() { /* Öncekiyle aynı */ }
+            selectCustomer(customerId) { this.state.selectedCustomerId = customerId; this.render(); },
+            openModal(recId, title, body) { this.state.currentAction = recId; document.getElementById('modal-title').innerText = title; document.getElementById('modal-body').innerText = body; document.getElementById('confirmation-modal').classList.remove('hidden'); },
+            closeModal() { document.getElementById('confirmation-modal').classList.add('hidden'); },
+            confirmAction() { if (!this.state.currentAction) return; const button = document.querySelector(`#rec-${this.state.currentAction} button`); button.disabled = true; button.innerText = 'İşlem Uygulanıyor...'; this.closeModal(); setTimeout(() => { button.innerText = '✓ Uygulandı'; }, 2000); this.state.currentAction = null; }
         };
-        
-        // Önceki versiyonlardaki render ve aksiyon fonksiyonlarını buraya kopyalıyoruz
-        // Bu, kodun tekrarını önlemek için yapılmıştır.
-        App.fetchData = function() { setTimeout(() => { this.state.customers = [ { id: 1, email: 'ayse.y@example.com', totalSpend: 450, date: '1 saat önce', journey: [{ event: 'Meta Reklamı Tıkladı', detail: 'Yaz Koleksiyonu Kampanyası', date: '3 gün önce', icon: 'M' }, { event: 'Siteyi Ziyaret Etti', detail: '5 sayfa gezdi', date: '3 gün önce', icon: '🌐' }, { event: 'Sepete Ekledi', detail: 'Yüksek Bel Siyah Bikini', date: '1 gün önce', icon: '🛒' }, { event: 'Satın Aldı', detail: 'Sipariş #1058', date: '1 saat önce', icon: '✅' }] }, { id: 2, email: 'burak.c@example.com', totalSpend: 280, date: '8 saat önce', journey: [{ event: 'Google Reklamı Tıkladı', detail: 'Bikini Modelleri Araması', date: '2 gün önce', icon: 'G' }, { event: 'Satın Aldı', detail: 'Sipariş #1057', date: '8 saat önce', icon: '✅' }] }, { id: 3, email: 'canan.s@example.com', totalSpend: 620, date: '1 gün önce', journey: [{ event: 'Siteyi Ziyaret Etti', detail: 'Organik Trafik', date: '5 gün önce', icon: '🌐' }, { event: 'E-posta Bültenine Kaydoldu', detail: 'Hoş geldin indirimi', date: '4 gün önce', icon: '✉️' }, { event: 'E-postayı Tıkladı', detail: 'Yeni Sezon Kampanyası', date: '1 gün önce', icon: '🖱️' }, { event: 'Satın Aldı', detail: 'Sipariş #1056', date: '1 gün önce', icon: '✅' }] } ]; this.state.selectedCustomerId = this.state.customers[0]?.id; this.state.recommendations = [ { id: 1, type: 'opportunity', title: 'Fırsat: Yüksek Performanslı Reklam', description: '"Yüksek Bel Siyah Bikini" için yürüttüğünüz Instagram reklamı son 3 günde **7.2x ROAS** getirdi. Bu reklamın günlük bütçesini 150 TL\'den 250 TL\'ye çıkararak potansiyeli artırmanızı öneriyoruz.', action: { title: 'Bütçeyi Artır', body: 'Bu reklamın günlük bütçesi 150 TL\'den 250 TL\'ye çıkarılacak. Onaylıyor musunuz?' } }, { id: 2, type: 'risk', title: 'Risk: Para Yakan Kampanya', description: '"Plaj Çantası" için yürüttüğünüz Google Ads kampanyası son 48 saattir kârlılığın altında (**0.8x ROAS**). Bu kampanyayı geçici olarak duraklatarak bütçenizi korumanızı öneriyoruz.', action: { title: 'Kampanyayı Duraklat', body: 'Bu kampanya geçici olarak duraklatılacak. Onaylıyor musunuz?' } }, { id: 3, type: 'insight', title: 'İçgörü: Müşteri Davranışı', description: 'Verilerinize göre, sitenizi mobil cihazdan ziyaret eden müşterilerin dönüşüm oranı, masaüstü kullanıcılardan **%35 daha yüksek**. Mobil reklamlarınıza ağırlık vermeyi düşünebilirsiniz.', action: null } ]; this.state.channelData = { google: { name: 'Google Ads', spend: 4200, revenue: 21000, roas: 5.0, conversions: 45, cpc: 3.50 }, meta: { name: 'Meta Ads', spend: 7000, revenue: 27750, roas: 3.96, conversions: 62, cpc: 2.80 } }; this.state.productData = [ { id: 1, name: 'Yüksek Bel Siyah Bikini', img: 'https://placehold.co/40x40/111827/FFFFFF?text=B', totalRevenue: 18500, googleRevenue: 6500, metaRevenue: 12000 }, { id: 2, name: 'Tropikal Desenli Tek Parça', img: 'https://placehold.co/40x40/10B981/FFFFFF?text=T', totalRevenue: 12200, googleRevenue: 4000, metaRevenue: 8200 }, { id: 3, name: 'Kırmızı Üçgen Bikini', img: 'https://placehold.co/40x40/EF4444/FFFFFF?text=K', totalRevenue: 9800, googleRevenue: 7800, metaRevenue: 2000 }, { id: 4, name: 'Plaj Çantası', img: 'https://placehold.co/40x40/F59E0B/FFFFFF?text=Ç', totalRevenue: 8250, googleRevenue: 3000, metaRevenue: 5250 }, ]; this.render(); }, 500); };
-        App.renderDashboard = function() { const container = document.getElementById('dashboard-view'); container.innerHTML = `<div id="summary-metrics" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"></div><div class="mt-8"><h3 class="text-xl font-semibold text-gray-900">Bugünün Aksiyon Önerileri</h3><div id="recommendations-container" class="mt-4 bg-white shadow rounded-lg p-6 space-y-6"></div></div>`; this.renderSummaryMetrics(); this.renderRecommendations(); };
-        App.renderJourneysView = function() { const container = document.getElementById('journeys-view'); container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="md:col-span-1 bg-white shadow rounded-lg p-4"><h3 class="text-lg font-semibold text-gray-900 mb-4">Son Müşteriler</h3><ul id="customer-list" class="space-y-2"></ul></div><div id="customer-journey-detail" class="md:col-span-2 bg-white shadow rounded-lg p-6"></div></div>`; this.renderCustomerList(); this.renderCustomerJourneyDetail(); };
-        App.renderChannelsView = function() { const container = document.getElementById('channels-view'); if (Object.keys(this.state.channelData).length === 0) { container.innerHTML = `<p class="text-center text-gray-500">Kanal verileri yükleniyor...</p>`; return; } let content = '<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">'; for(const key in this.state.channelData) { const channel = this.state.channelData[key]; content += `<div class="bg-white shadow rounded-lg p-6"><h3 class="text-2xl font-bold text-gray-900 mb-4">${channel.name}</h3><div class="space-y-4"><div class="flex justify-between items-center border-b pb-2"><span class="text-gray-600">Reklam Harcaması</span><span class="font-semibold text-lg">₺${channel.spend.toLocaleString('tr-TR')}</span></div><div class="flex justify-between items-center border-b pb-2"><span class="text-gray-600">Getirilen Ciro</span><span class="font-semibold text-lg">₺${channel.revenue.toLocaleString('tr-TR')}</span></div><div class="flex justify-between items-center border-b pb-2"><span class="text-gray-600">Reklam Kârlılığı (ROAS)</span><span class="font-bold text-xl ${channel.roas > 4 ? 'text-green-600' : 'text-orange-500'}">${channel.roas.toFixed(2)}x</span></div><div class="flex justify-between items-center border-b pb-2"><span class="text-gray-600">Dönüşüm Sayısı</span><span class="font-semibold text-lg">${channel.conversions}</span></div><div class="flex justify-between items-center"><span class="text-gray-600">Tıklama Başına Maliyet (CPC)</span><span class="font-semibold text-lg">₺${channel.cpc.toFixed(2)}</span></div></div></div>`; } content += '</div>'; container.innerHTML = content; };
-        App.renderProductsView = function() { const container = document.getElementById('products-view'); if (this.state.productData.length === 0) { container.innerHTML = `<p class="text-center text-gray-500">Ürün performans verileri yükleniyor...</p>`; return; } let tableHTML = `<div class="bg-white shadow rounded-lg overflow-hidden"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ürün</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toplam Ciro</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Google Ads Getirisi</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Meta Ads Getirisi</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">`; this.state.productData.forEach(product => { tableHTML += `<tr><td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center"><div class="flex-shrink-0 h-10 w-10"><img class="h-10 w-10 rounded-full" src="${product.img}" alt="${product.name}"></div><div class="ml-4"><div class="text-sm font-medium text-gray-900">${product.name}</div></div></div></td><td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-bold text-gray-900">₺${product.totalRevenue.toLocaleString('tr-TR')}</div></td><td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">₺${product.googleRevenue.toLocaleString('tr-TR')}</div></td><td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-700">₺${product.metaRevenue.toLocaleString('tr-TR')}</div></td></tr>`; }); tableHTML += `</tbody></table></div>`; container.innerHTML = tableHTML; };
-        App.selectCustomer = function(customerId) { this.state.selectedCustomerId = customerId; this.render(); };
-        App.openModal = function(recId, title, body) { this.state.currentAction = recId; document.getElementById('modal-title').innerText = title; document.getElementById('modal-body').innerText = body; document.getElementById('confirmation-modal').classList.remove('hidden'); };
-        App.closeModal = function() { document.getElementById('confirmation-modal').classList.add('hidden'); };
-        App.confirmAction = function() { if (!this.state.currentAction) return; const button = document.querySelector(`#rec-${this.state.currentAction} button`); button.disabled = true; button.innerText = 'İşlem Uygulanıyor...'; this.closeModal(); setTimeout(() => { button.innerText = '✓ Uygulandı'; }, 2000); this.state.currentAction = null; };
 
         // Uygulamayı başlat
         document.addEventListener('DOMContentLoaded', () => App.init());
