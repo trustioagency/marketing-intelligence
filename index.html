@@ -213,7 +213,70 @@
             },
             renderSettingsView() {
                 const container = document.getElementById('settings-view');
-                container.innerHTML = `<p>Ayarlar ekranı burada olacak.</p>`;
+                let integrationsHTML = '';
+                for (const key in this.state.integrations) {
+                    const integration = this.state.integrations[key];
+                    if(integration.connected) {
+                        integrationsHTML += `
+                            <li class="flex items-center justify-between py-3">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 flex items-center justify-center">${integration.logo}</div>
+                                    <span class="ml-4 text-sm font-medium text-gray-900">${integration.name}</span>
+                                </div>
+                                <button class="text-sm text-red-600 hover:text-red-800 font-semibold">Bağlantıyı Kes</button>
+                            </li>
+                        `;
+                    }
+                }
+
+                container.innerHTML = `
+                    <div class="space-y-10">
+                        <!-- Profil Bilgileri Kartı -->
+                        <div class="bg-white shadow rounded-lg">
+                            <div class="px-4 py-5 sm:p-6">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Profil Bilgileri</h3>
+                                <div class="mt-5 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                    <div class="sm:col-span-3">
+                                        <label for="full-name" class="block text-sm font-medium text-gray-700">Ad Soyad</label>
+                                        <input type="text" name="full-name" id="full-name" value="Merve Yılmaz" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    </div>
+                                    <div class="sm:col-span-3">
+                                        <label for="email" class="block text-sm font-medium text-gray-700">E-posta Adresi</label>
+                                        <input type="email" name="email" id="email" value="merve@example.com" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    </div>
+                                    <div class="sm:col-span-6">
+                                        <button class="w-full sm:w-auto bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700">Değişiklikleri Kaydet</button>
+                                        <button class="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-3 border border-gray-300 bg-white text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-50">Şifre Değiştir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Entegrasyonlar Kartı -->
+                        <div class="bg-white shadow rounded-lg">
+                            <div class="px-4 py-5 sm:p-6">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Entegrasyonlar</h3>
+                                <ul class="mt-2 divide-y divide-gray-200">
+                                    ${integrationsHTML}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Abonelik Kartı -->
+                        <div class="bg-white shadow rounded-lg">
+                            <div class="px-4 py-5 sm:p-6">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Abonelik ve Faturalandırma</h3>
+                                <div class="mt-5 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Mevcut Planınız</p>
+                                        <p class="text-lg font-semibold text-indigo-600">Büyüme Paketi</p>
+                                    </div>
+                                    <button class="border border-gray-300 bg-white text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-50">Aboneliği Yönet</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             },
             renderSummaryMetrics() {
                 const container = document.getElementById('summary-metrics'); if(!container) return;
@@ -302,4 +365,4 @@
     </script>
 
 </body>
-</html>
+</ht
