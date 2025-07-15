@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing Intelligence App - V8</title>
+    <title>Marketing Intelligence App - V8.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -13,8 +13,10 @@
         .option-card-selected {
             transform: scale(1.05);
             border-color: #4f46e5; /* indigo-600 */
-            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.1);
         }
+        .modal-overlay { transition: opacity 0.3s ease; }
+        .modal-container { transition: transform 0.3s ease; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -22,15 +24,10 @@
     <div id="app" class="flex h-screen">
         <!-- Sol Navigasyon Menüsü (Sidebar) -->
         <aside id="sidebar" class="sidebar bg-white w-64 flex-shrink-0 border-r border-gray-200 flex-col hidden">
-            <!-- Logo -->
             <div class="h-16 flex items-center justify-center border-b border-gray-200">
                 <h1 class="text-xl font-bold text-indigo-600">Marketing Intelligence</h1>
             </div>
-            <!-- Menü -->
-            <nav id="nav-menu" class="flex-grow px-4 py-4 space-y-2">
-                <!-- Menü JavaScript ile buraya eklenecek -->
-            </nav>
-            <!-- Kullanıcı Profili -->
+            <nav id="nav-menu" class="flex-grow px-4 py-4 space-y-2"></nav>
             <div class="border-t border-gray-200 p-4">
                  <div class="flex items-center space-x-3">
                     <img class="h-10 w-10 rounded-full" src="https://placehold.co/100x100/E2E8F0/4A5568?text=M" alt="Merve Profil Fotoğrafı">
@@ -44,20 +41,16 @@
 
         <!-- Ana İçerik Alanı -->
         <main id="main-content" class="flex-1 flex flex-col overflow-hidden">
-            <!-- Header (Sadece ana ekranlarda görünecek) -->
             <header id="main-header" class="bg-white shadow-sm hidden">
                 <div class="h-16 flex items-center justify-between px-8">
                     <h2 id="view-title" class="text-2xl font-bold text-gray-900"></h2>
-                    <button class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 text-sm">
-                        Yeni Rapor Oluştur
-                    </button>
+                    <button class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 text-sm">Yeni Rapor Oluştur</button>
                 </div>
             </header>
-            <!-- İçerik -->
             <div id="content-area" class="flex-1 overflow-y-auto">
                 <!-- GÖRÜNÜMLER İÇİN KONTEYNER -->
-                <div id="brand-setup-view"></div>
-                <div id="integration-setup-view"></div>
+                <div id="brand_setup-view"></div>
+                <div id="integration_setup-view"></div>
                 <div id="dashboard-view"></div>
                 <div id="journeys-view"></div>
                 <div id="channels-view"></div>
@@ -75,15 +68,15 @@
 
     <script>
         // ===================================================================================
-        // UYGULAMA BEYNİ (JAVASCRIPT KODU) - V8
+        // UYGULAMA BEYNİ (JAVASCRIPT KODU) - V8.3
         // ===================================================================================
         const App = {
-            // 1. UYGULAMA DURUMU (STATE)
             state: {
-                currentView: 'brand_setup', // YENİ BAŞLANGIÇ EKRANI
-                brandProfile: {}, // Marka tanımlama verileri burada saklanacak
+                currentView: 'brand_setup', 
+                brandProfile: {}, 
                 integrations: {
                     shopify: { name: 'Shopify', connected: false, logo: '<svg class="w-12 h-12" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Shopify</title><path d="M13.283 3.292c-2.422 1.33-3.838 3.868-3.838 6.613 0 1.29.308 2.503.857 3.587l-.003.004.002.003c.532 1.056 1.32 1.961 2.28 2.648l.003.002.002.001c.942.673 2.028 1.123 3.195 1.302l.004.001.004.001c1.18.18 2.383-.01 3.507-.535l.004-.002.003-.001c1.155-.54 2.15-1.36 2.91-2.395l.003-.004.002-.003c.787-1.072 1.31-2.345 1.49-3.72l.001-.004.001-.004V10.22c-.01-4.08-2.36-7.74-5.91-9.63l-.004-.002-.004-.002c-1.18-.63-2.5-.96-3.86-.96-1.39 0-2.75.35-3.99.99zm-1.43 11.898c-.02-.03-.04-.06-.06-.09l-.003-.005c-.5-1-1.2-1.8-2.07-2.38l-.004-.002-.003-.002c-2.4-1.6-3.8-4.4-3.8-7.3 0-1.3.3-2.5 1-3.6l.002-.003.003-.004c.5-1 1.2-1.8 2.1-2.4l.003-.002.003-.002c2.4-1.6 5.4-2 8.1-.9l.004.001.004.002c-1.9 4.2-6.2 7.2-11.2 7.2h-2.2z" fill="#7AB55C"/></svg>', color: 'green' },
+                    ga4: { name: 'Google Analytics 4', connected: false, logo: '<svg class="w-10 h-10" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="50" width="15" height="50" rx="7.5" fill="#F4A032"/><rect x="50" y="25" width="15" height="75" rx="7.5" fill="#F4A032"/><rect x="75" y="75" width="15" height="25" rx="7.5" fill="#F4A032"/></svg>', color: 'orange' },
                     google_ads: { name: 'Google Ads', connected: false, logo: '<svg class="w-12 h-12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.24 12.24l-2.48 2.48-2.48-2.48-2.48 2.48-4.76-4.76 4.76-4.76 2.48 2.48 2.48-2.48 2.48 2.48 4.76 4.76-4.76 4.76z" fill="#4285F4"/><path d="M16.92 14.72l-2.48-2.48 2.48-2.48 4.76-4.76v14.48l-4.76-4.76z" fill="#34A853"/><path d="M7.28 9.52l2.48 2.48-2.48 2.48-4.76 4.76V2.52l4.76 4.76z" fill="#FBBC05"/><path d="M9.76 12.24l2.48-2.48 2.48 2.48-2.48 2.48-2.48-2.48z" fill="#EA4335"/></svg>', color: 'blue' },
                     meta: { name: 'Meta', connected: false, logo: '<svg class="w-12 h-12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm3.64 16.5c-.247 1.47-1.42 2.643-2.89 2.89-1.85.31-6.39.31-8.24 0-1.47-.247-2.643-1.42-2.89-2.89-.31-1.85-.31-6.39 0-8.24.247-1.47 1.42-2.643 2.89-2.89 1.85-.31 6.39-.31 8.24 0 1.47.247 2.643 1.42 2.89 2.89.31 1.85.31 6.39 0 8.24z" fill="#0062E0"/><path d="M9.75 14.75V9.25l4.5 2.75-4.5 2.75z" fill="#0062E0"/></svg>', color: 'indigo' },
                     tiktok: { name: 'TikTok', connected: false, logo: '<svg class="w-10 h-10" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.01-1.58-.01-3.16 0-4.75l-.04 1.28c-1.47.6-2.93 1.21-4.4 1.79v4.54c1.38-.47 2.76-.93 4.14-1.39v4.26c-1.45.48-2.9.95-4.35 1.42V24c-1.59 0-3.19 0-4.78 0 .01-1.23.01-2.45 0-3.68-.92-.33-1.85-.64-2.78-.94-.01-1.57.01-3.14-.01-4.71.9-.3 1.8-.6 2.7-.9v4.52c1.46.63 2.92 1.26 4.38 1.87V4.27C9.53 3.2 8.52 2.14 7.5 1.04 8.91.65 10.79.33 12.53.02z" fill="#000000"/></svg>', color: 'black' }
@@ -97,25 +90,25 @@
                     { type: 'item', id: 'products', label: 'Ürünler', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>' },
                     { type: 'item', id: 'journeys', label: 'Müşteri Yolculukları', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' },
                     { type: 'heading', label: 'Yönetim' },
-                    { type: 'item', id: 'audiences', label: 'Hedef Kitleler', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>' },
+                    { type: 'item', id: 'audiences', label: 'Hedef Kitleler', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>' },
                     { type: 'item', id: 'creatives', label: 'Kreatifler', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>' },
                     { type: 'item', id: 'settings', label: 'Ayarlar', icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>' },
                 ],
-                // Diğer state verileri...
+                customers: [],
+                recommendations: [],
+                channelData: {},
+                productData: [],
+                currentAction: null
             },
 
-            // 2. BAŞLATMA
             init() {
-                console.log("Uygulama V8 başlatılıyor...");
+                console.log("Uygulama V8.3 başlatılıyor...");
                 this.render();
             },
             
-            // 3. RENDER FONKSİYONLARI
             render() {
-                const views = ['brand-setup-view', 'integration-setup-view', 'dashboard-view', 'journeys-view', 'channels-view', 'products-view', 'strategy-view', 'audiences-view', 'creatives-view', 'settings-view'];
-                views.forEach(viewId => {
-                    document.getElementById(viewId.replace('-view', '') + '-view').style.display = 'none';
-                });
+                const views = ['brand_setup-view', 'integration_setup-view', 'dashboard-view', 'journeys-view', 'channels-view', 'products-view', 'strategy-view', 'audiences-view', 'creatives-view', 'settings-view'];
+                views.forEach(viewId => { document.getElementById(viewId.replace('-view', '') + '-view').style.display = 'none'; });
                 
                 const isSetupPhase = this.state.currentView === 'brand_setup' || this.state.currentView === 'integration_setup';
                 document.getElementById('sidebar').style.display = isSetupPhase ? 'none' : 'flex';
@@ -138,7 +131,6 @@
                     const currentNavItem = this.state.navigation.find(item => item.id === this.state.currentView);
                     document.getElementById('view-title').innerText = currentNavItem ? currentNavItem.label : 'Marketing Intelligence';
                     
-                    // Diğer ekranların render fonksiyonları
                     if (this.state.currentView === 'dashboard') this.renderDashboard();
                     else if (this.state.currentView === 'strategy') this.renderStrategyView();
                     else if (this.state.currentView === 'audiences') this.renderAudiencesView();
@@ -150,50 +142,52 @@
                 }
             },
             
+            renderSidebar() {
+                const container = document.getElementById('nav-menu');
+                container.innerHTML = '';
+                this.state.navigation.forEach(item => {
+                    if (item.type === 'heading') {
+                        container.innerHTML += `<h3 class="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">${item.label}</h3>`;
+                    } else if (item.type === 'item') {
+                        const isActive = this.state.currentView === item.id;
+                        container.innerHTML += `<a href="#" onclick="App.switchView('${item.id}')" class="flex items-center px-3 py-2 text-sm font-medium rounded-md ${isActive ? 'bg-indigo-50 text-indigo-600' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'}">${item.icon}<span class="ml-3">${item.label}</span></a>`;
+                    }
+                });
+            },
+            
             renderBrandSetupView() {
-                const container = document.getElementById('brand-setup-view');
+                const container = document.getElementById('brand_setup-view');
                 const questions = [
                     { id: 'style', question: 'Markanızın tarzı en iyi nasıl tanımlanır?', options: ['Lüks & Premium', 'Eğlenceli & Renkli', 'Minimalist & Modern', 'Doğal & Bohem'] },
                     { id: 'audience', question: 'Ana hedef kitleniz kim?', options: ['Genç Profesyoneller (25-35)', 'Öğrenciler (18-24)', 'Lüks Tüketici', 'Gezginler & Maceracılar'] },
                     { id: 'goal', question: 'Bu çeyrekteki en büyük hedefiniz nedir?', options: ['Ciro Artışı', 'Marka Bilinirliği', 'Kârlılığı Artırmak', 'Yeni Müşteri Kazanımı'] }
                 ];
-                let content = `
-                    <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-xl">
-                        <div class="text-center">
-                            <h2 class="text-3xl font-bold text-gray-900">Markanızın DNA'sını Tanımlayalım</h2>
-                            <p class="text-gray-600 mt-2">Bu bilgiler, size özel stratejiler üretmemize yardımcı olacak.</p>
-                        </div>
-                        <div class="mt-10 space-y-10">
-                `;
+                let content = `<div class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-xl"><div class="text-center"><h2 class="text-3xl font-bold text-gray-900">Markanızın DNA'sını Tanımlayalım</h2><p class="text-gray-600 mt-2">Bu bilgiler, size özel stratejiler üretmemize yardımcı olacak.</p></div><div class="mt-10 space-y-10">`;
                 questions.forEach(q => {
                     content += `<div><h3 class="text-lg font-semibold text-gray-800">${q.question}</h3><div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">`;
                     q.options.forEach(opt => {
                         const isSelected = this.state.brandProfile[q.id] === opt;
-                        content += `<div onclick="App.selectBrandOption('${q.id}', '${opt}')" class="option-card cursor-pointer p-4 border-2 rounded-lg text-center ${isSelected ? 'option-card-selected' : 'border-gray-200 hover:border-gray-400'}">
-                                        <p class="font-medium text-sm">${opt}</p>
-                                    </div>`;
+                        content += `<div onclick="App.selectBrandOption('${q.id}', '${opt}')" class="option-card cursor-pointer p-4 border-2 rounded-lg text-center ${isSelected ? 'option-card-selected' : 'border-gray-200 hover:border-gray-400'}"><p class="font-medium text-sm">${opt}</p></div>`;
                     });
                     content += `</div></div>`;
                 });
-                content += `
-                        </div>
-                        <div class="mt-12 text-center">
-                            <button onclick="App.completeBrandSetup()" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition duration-300">Devam Et</button>
-                        </div>
-                    </div>
-                `;
+                content += `</div><div class="mt-12 text-center"><button onclick="App.completeBrandSetup()" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition duration-300">Devam Et</button></div></div>`;
                 container.innerHTML = content;
             },
 
             renderIntegrationSetupView() {
-                // Bu fonksiyon eski renderSetupView'in içeriğini kullanır.
-                const container = document.getElementById('integration-setup-view');
-                // ... (V6.3'teki renderSetupView içeriği buraya gelecek)
+                const container = document.getElementById('integration_setup-view');
+                let cardsHTML = '';
+                for (const key in this.state.integrations) {
+                    const integration = this.state.integrations[key];
+                    const buttonColorClass = integration.color === 'black' ? 'bg-black hover:bg-gray-800' : `bg-${integration.color}-600 hover:bg-${integration.color}-700`;
+                    cardsHTML += `<div id="card-${key}" class="border ${integration.connected ? `border-${integration.color}-500 bg-${integration.color}-50` : 'border-gray-200'} rounded-lg p-6 flex flex-col items-center justify-between space-y-4 transition-all duration-300"><div class="h-16 flex items-center justify-center">${integration.logo}</div><h3 class="text-lg font-semibold text-center h-12 flex items-center justify-center">${integration.name}</h3><button onclick="App.connect('${key}')" class="w-full ${integration.connected ? 'bg-gray-400 cursor-not-allowed' : buttonColorClass} text-white font-bold py-2 px-4 rounded-lg transition duration-300" ${integration.connected ? 'disabled' : ''}>${integration.connected ? '✓ Bağlandı' : 'Bağlan'}</button></div>`;
+                }
+                container.innerHTML = `<div class="max-w-6xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-xl"><div class="text-center"><h2 class="text-3xl font-bold text-gray-900">Harika! Son Adım: Veri Kaynakları</h2><p class="text-gray-600 mt-2">Platformun beynini beslemek için veri kaynaklarınızı bağlayın.</p></div><div id="integration-cards" class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">${cardsHTML}</div><div id="analysis-message" class="hidden text-center pt-6"><h3 class="text-xl font-semibold mt-4">Tüm bağlantılar tamam!</h3><p class="text-gray-600 mt-2">Sizin için her şeyi hazırlıyoruz. Ana panele yönlendiriliyorsunuz...</p></div></div>`;
             },
-
-            // Diğer tüm render ve aksiyon fonksiyonları
-            // ... (V6.3'teki tüm diğer fonksiyonlar buraya eklenecek)
             
+            // Diğer tüm render fonksiyonları buraya eklenecek...
+
             // AKSİYONLAR
             switchView(viewId) {
                 this.state.currentView = viewId;
@@ -206,19 +200,41 @@
             },
 
             completeBrandSetup() {
-                // Basit bir kontrol, tüm soruların cevaplandığından emin olalım
                 if (Object.keys(this.state.brandProfile).length < 3) {
                     alert('Lütfen devam etmeden önce tüm soruları yanıtlayın.');
                     return;
                 }
-                console.log("Marka Profili:", this.state.brandProfile);
                 this.state.currentView = 'integration_setup';
                 this.render();
             },
 
             connect(platformKey) {
-                // ...
-            }
+                this.state.integrations[platformKey].connected = true;
+                this.render(); 
+                
+                const allConnected = Object.values(this.state.integrations).every(p => p.connected);
+                if (allConnected) {
+                    const analysisMessage = document.getElementById('analysis-message');
+                    if(analysisMessage) analysisMessage.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        this.state.currentView = 'dashboard';
+                        this.fetchData();
+                    }, 2000);
+                }
+            },
+
+            fetchData() {
+                 setTimeout(() => {
+                    this.state.customers = [ { id: 1, email: 'ayse.y@example.com', totalSpend: 450, date: '1 saat önce', journey: [{ event: 'Meta Reklamı Tıkladı', detail: 'Yaz Koleksiyonu Kampanyası', date: '3 gün önce', icon: 'M' }, { event: 'Siteyi Ziyaret Etti', detail: '5 sayfa gezdi', date: '3 gün önce', icon: '🌐' }, { event: 'Sepete Ekledi', detail: 'Yüksek Bel Siyah Bikini', date: '1 gün önce', icon: '🛒' }, { event: 'Satın Aldı', detail: 'Sipariş #1058', date: '1 saat önce', icon: '✅' }] }, { id: 2, email: 'burak.c@example.com', totalSpend: 280, date: '8 saat önce', journey: [{ event: 'Google Reklamı Tıkladı', detail: 'Bikini Modelleri Araması', date: '2 gün önce', icon: 'G' }, { event: 'Satın Aldı', detail: 'Sipariş #1057', date: '8 saat önce', icon: '✅' }] }, { id: 3, email: 'canan.s@example.com', totalSpend: 620, date: '1 gün önce', journey: [{ event: 'Siteyi Ziyaret Etti', detail: 'Organik Trafik', date: '5 gün önce', icon: '🌐' }, { event: 'E-posta Bültenine Kaydoldu', detail: 'Hoş geldin indirimi', date: '4 gün önce', icon: '✉️' }, { event: 'E-postayı Tıkladı', detail: 'Yeni Sezon Kampanyası', date: '1 gün önce', icon: '🖱️' }, { event: 'Satın Aldı', detail: 'Sipariş #1056', date: '1 gün önce', icon: '✅' }] } ];
+                    this.state.selectedCustomerId = this.state.customers[0]?.id;
+                    this.state.recommendations = [ { id: 1, type: 'opportunity', title: 'Fırsat: Yüksek Performanslı Reklam', description: '"Yüksek Bel Siyah Bikini" için yürüttüğünüz Instagram reklamı son 3 günde **7.2x ROAS** getirdi. Bu reklamın günlük bütçesini 150 TL\'den 250 TL\'ye çıkararak potansiyeli artırmanızı öneriyoruz.', action: { title: 'Bütçeyi Artır', body: 'Bu reklamın günlük bütçesi 150 TL\'den 250 TL\'ye çıkarılacak. Onaylıyor musunuz?' } }, { id: 2, type: 'risk', title: 'Risk: Para Yakan Kampanya', description: '"Plaj Çantası" için yürüttüğünüz Google Ads kampanyası son 48 saattir kârlılığın altında (**0.8x ROAS**). Bu kampanyayı geçici olarak duraklatarak bütçenizi korumanızı öneriyoruz.', action: { title: 'Kampanyayı Duraklat', body: 'Bu kampanya geçici olarak duraklatılacak. Onaylıyor musunuz?' } }, { id: 3, type: 'insight', title: 'İçgörü: Müşteri Davranışı', description: 'Verilerinize göre, sitenizi mobil cihazdan ziyaret eden müşterilerin dönüşüm oranı, masaüstü kullanıcılardan **%35 daha yüksek**. Mobil reklamlarınıza ağırlık vermeyi düşünebilirsiniz.', action: null } ];
+                    this.state.channelData = { google: { name: 'Google Ads', spend: 4200, revenue: 21000, roas: 5.0, conversions: 45, cpc: 3.50 }, meta: { name: 'Meta Ads', spend: 7000, revenue: 27750, roas: 3.96, conversions: 62, cpc: 2.80 } };
+                    this.state.productData = [ { id: 1, name: 'Yüksek Bel Siyah Bikini', totalRevenue: 18500 }, { id: 2, name: 'Tropikal Desenli Tek Parça', totalRevenue: 12200 }, { id: 3, name: 'Kırmızı Üçgen Bikini', totalRevenue: 9800 }, { id: 4, name: 'Plaj Çantası', totalRevenue: 8250 }, ];
+                    this.render();
+                }, 100);
+            },
+            // Diğer tüm render ve aksiyon fonksiyonları buraya eklenecek
         };
 
         // Uygulamayı başlat
